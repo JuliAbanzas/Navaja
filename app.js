@@ -14,6 +14,7 @@ const App = {
         this.initKeyboard();
         this.initOffline();
         this.initOnboarding();
+        this.initModalScrollLock();
         this.initNavBadge();
         this.initPullRefresh();
         this.initNotifications();
@@ -252,6 +253,25 @@ const App = {
             homeBtn.addEventListener('click', doInstall);
             homeBtn.classList.add('hidden');
         }
+    },
+
+    // ---------- MODAL SCROLL LOCK ----------
+
+    initModalScrollLock() {
+        const observer = new MutationObserver(() => {
+            const open = document.querySelector('.modal-overlay.open');
+            document.body.style.overflow = open ? 'hidden' : '';
+            document.body.style.position = open ? 'fixed' : '';
+            document.body.style.width = open ? '100%' : '';
+            document.body.style.top = open ? `-${window.scrollY}px` : '';
+            if (!open && this._scrollY != null) {
+                window.scrollTo(0, this._scrollY);
+                this._scrollY = null;
+            } else if (open) {
+                this._scrollY = window.scrollY;
+            }
+        });
+        document.querySelectorAll('.modal-overlay').forEach(el => observer.observe(el, { attributes: true, attributeFilter: ['class'] }));
     },
 
     // ---------- KEYBOARD ----------
