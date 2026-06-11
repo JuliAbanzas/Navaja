@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Navaja</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon-new.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="theme-color" content="#f5f5f5" id="themeColorMeta">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="offline-bar" id="offlineBar">Sin conexión — los cambios se guardan localmente</div>
+    <div class="app">
+        <!-- ========== INICIO VIEW ========== -->
+        <section class="view active" id="view-home">
+            <header class="view-header">
+                <h1>Inicio</h1>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <span class="view-date" style="display:inline-flex;align-items:center;gap:6px;"><span id="syncDot" style="width:7px;height:7px;border-radius:50%;background:var(--text-tertiary);flex-shrink:0;"></span><span id="homeDate"></span></span>
+                    <button class="btn-icon" id="globalSearchBtn" aria-label="Buscar" style="width:40px;height:40px;background:var(--bg);color:var(--text-secondary);box-shadow:none;border-radius:50%;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </button>
+                    <button class="btn-icon" id="themeToggle" aria-label="Cambiar tema" style="width:40px;height:40px;background:var(--bg);color:var(--text-secondary);box-shadow:none;border-radius:50%;font-size:18px;line-height:1;"></button>
+                    <button class="btn-icon" id="settingsBtn" aria-label="Configuración" style="width:40px;height:40px;background:var(--bg);color:var(--text-secondary);box-shadow:none;border-radius:50%;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.32 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                    </button>
+                    <button class="btn-icon" id="firebaseHeaderBtn" aria-label="Cuenta" style="width:40px;height:40px;background:var(--bg);color:var(--text-secondary);box-shadow:none;border-radius:50%;display:none;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </button>
+                    <a class="header-donate" href="https://cafecito.app/julitech10" target="_blank" rel="noopener" aria-label="Invítame un café">☕</a>
+                </div>
+            </header>
+            <div class="install-banner" id="installBanner">
+                <span class="install-banner-icon">📱</span>
+                <span class="install-banner-text">Instalá Navaja en tu pantalla de inicio para usarla como app</span>
+                <button class="install-banner-btn" id="installBtn">Instalar</button>
+                <button class="install-banner-close" id="installDismiss">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="home-grid">
+                <div class="home-card home-balance">
+                    <div class="home-card-label">Balance total</div>
+                    <div class="home-card-value" id="homeBalance">$0</div>
+                </div>
+                <div class="home-card home-expense">
+                    <div class="home-card-label">Gastos del mes</div>
+                    <div class="home-card-value" id="homeExpense">$0</div>
+                </div>
+                <div class="home-card home-tasks" onclick="document.querySelector('[data-view=notes]').click()">
+                    <div class="home-card-label">Notas</div>
+                    <div class="home-card-value" id="homeNotes">0</div>
+                </div>
+                <div class="home-card home-reminders">
+                    <div class="home-card-label">Vencimientos</div>
+                    <div class="home-card-value" id="homeReminders">0</div>
+                </div>
+            </div>
+            <div id="dailyLimitBar"></div>
+            <div class="home-insight-row" id="homeInsights">
+                <div class="home-insight">
+                    <div class="home-insight-label">Gasto diario</div>
+                    <div class="home-insight-value" id="insightDaily">$0</div>
+                </div>
+                <div class="home-insight">
+                    <div class="home-insight-label">Categoría principal</div>
+                    <div class="home-insight-value" id="insightTopCat">—</div>
+                </div>
+                <div class="home-insight">
+                    <div class="home-insight-label">Transacciones</div>
+                    <div class="home-insight-value" id="insightTxCount">0</div>
+                </div>
+            </div>
+            <div class="home-actions">
+                <button class="ha-btn" onclick="document.querySelector('[data-view=tasks]').click()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+                    Tareas
+                </button>
+                <button class="ha-btn" onclick="document.querySelector('[data-view=expenses]').click()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 100 4h4a2 2 0 110 4H8"/><path d="M12 2v2m0 16v2"/></svg>
+                    + Gasto
+                </button>
+                <button class="ha-btn" onclick="document.querySelector('[data-view=notes]').click()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    Nota
+                </button>
+                <button class="ha-btn" onclick="document.querySelector('[data-view=split]').click()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                    Dividir
+                </button>
+                <button class="ha-btn ha-install" id="installHomeBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Instalar app
+                </button>
+            </div>
+            <div id="savingsHome" hidden>
+                <div class="today-section-title" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+                    <span>Metas de ahorro</span>
+                    <button class="budgets-edit-btn" id="savingsAddHomeBtn">+ Nueva</button>
+                </div>
+                <div id="savingsHomeList"></div>
+            </div>
+            <div class="donate-bar">
+                <a class="donate-btn" href="https://cafecito.app/julitech10" rel="noopener" target="_blank">☕ Invítame un café</a>
+            </div>
+        </section>
+
+        <!-- ========== TAREAS VIEW ========== -->
+        <section class="view" id="view-tasks">
+            <header class="view-header">
+                <h1>Tareas</h1>
+                <span class="view-date" id="tasksDate"></span>
+            </header>
+            <form id="taskForm">
+                <div class="input-row">
+                    <input type="text" id="taskInput" placeholder="Nueva tarea..." autocomplete="off" required>
+                    <input type="date" id="taskDateInput" class="task-date-input" aria-label="Fecha de vencimiento">
+                    <button type="submit" class="btn-icon" aria-label="Agregar">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                </div>
+            </form>
+            <details style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;font-size:13px;color:var(--text-secondary);line-height:1.7;cursor:pointer;">
+                <summary style="font-weight:600;color:var(--text);cursor:pointer;outline:none;">📖 Ayuda rápida</summary>
+                <div style="margin-top:10px;">
+                    <strong>Agregar:</strong> escribí y presioná Enter.<br>
+                    <strong>Completar:</strong> tocá el círculo ✓ a la izquierda.<br>
+                    <strong>Fecha:</strong> tocá la fecha para cambiarla.<br>
+                    <strong>Eliminar:</strong> deslizá a la izquierda o tocá ✕.<br>
+                    <strong>Deshacer:</strong> tocá "Deshacer" en el toast.
+                </div>
+            </details>
+            <ul id="taskList" class="item-list"></ul>
+            <div class="empty-state" id="tasksEmpty">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+                <p>No hay tareas</p>
+            </div>
+        </section>
+
+        <!-- ========== NOTAS VIEW ========== -->
+        <section class="view" id="view-notes">
+            <header class="view-header">
+                <h1>Notas</h1>
+                <button class="btn-icon" id="notesAddBtn" aria-label="Nueva nota">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+            </header>
+            <details style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;font-size:13px;color:var(--text-secondary);line-height:1.7;cursor:pointer;">
+                <summary style="font-weight:600;color:var(--text);cursor:pointer;outline:none;">📖 Ayuda rápida</summary>
+                <div style="margin-top:10px;">
+                    <strong>Agregar:</strong> tocá <strong>+</strong> arriba.<br>
+                    <strong>Editar:</strong> tocá una nota para abrirla.<br>
+                    <strong>Fijar:</strong> usá el pin 📌 para ordenar arriba.<br>
+                    <strong>Color:</strong> elegí un color al editar.<br>
+                    <strong>Buscar:</strong> escribí en el campo de búsqueda.<br>
+                    <strong>Eliminar:</strong> deslizá a la izquierda.
+                </div>
+            </details>
+            <input type="text" id="notesSearch" placeholder="Buscar notas..." class="modal-input" style="margin-bottom:12px;">
+            <div id="notesList" class="card-list"></div>
+            <div class="empty-state" id="notesEmpty">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <p>No hay notas</p>
+            </div>
+        </section>
+
+        <!-- NOTE EDITOR MODAL -->
+        <div class="modal-overlay" id="noteModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 id="noteModalTitle">Nueva nota</h2>
+                    <button class="btn-icon" id="noteModalClose" aria-label="Cerrar">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <input type="text" id="noteTitleInput" placeholder="Título" class="modal-input">
+                <textarea id="noteContentInput" placeholder="Escribí algo..." rows="6"></textarea>
+                <div class="note-color-picker" id="noteColorPicker"></div>
+                <button class="btn-primary" id="noteSaveBtn">Guardar</button>
+            </div>
+        </div>
+
+        <!-- ========== GASTOS VIEW ========== -->
+        <section class="view" id="view-expenses">
+            <header class="view-header">
+                <h1>Gastos</h1>
+                <div style="display:flex;gap:6px;">
+                    <button class="btn-icon" id="pdfReportBtn" aria-label="Reporte PDF" style="width:40px;height:40px;background:var(--bg);color:var(--text-secondary);box-shadow:none;border-radius:50%;font-size:14px;font-weight:700;">PDF</button>
+                    <button class="btn-icon" id="exportBtn" aria-label="Exportar CSV" style="background:var(--bg);color:var(--text-secondary);box-shadow:none;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    </button>
+                    <button class="btn-icon" id="expenseAddBtn" aria-label="Nuevo movimiento">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                </div>
+            </header>
+
+            <div class="balance-card">
+                <div class="balance-label">Saldo disponible</div>
+                <div class="balance-amount" id="balanceAmount">$0.00</div>
+                <div class="balance-row">
+                    <div class="balance-item income">
+                        <span class="balance-item-label">Ingresos</span>
+                        <span id="totalIncome">$0</span>
+                    </div>
+                    <div class="balance-item expense">
+                        <span class="balance-item-label">Gastos</span>
+                        <span id="totalExpense">$0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="account-bar">
+                <div class="account-pills" id="accountPills"></div>
+                <button class="account-edit-btn" id="accountEditBtn" aria-label="Editar cuentas">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+            </div>
+
+            <details style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;font-size:13px;color:var(--text-secondary);line-height:1.7;cursor:pointer;">
+                <summary style="font-weight:600;color:var(--text);cursor:pointer;outline:none;">📖 ¿Cómo usar Gastos?</summary>
+                <div style="margin-top:10px;">
+                    <strong>Agregar movimientos:</strong> tocá <strong>+</strong> arriba → elegí Gasto/Ingreso/Transferencia → completá los datos.<br>
+                    <strong>Filtrar:</strong> usá los botones de tipo y categoría arriba de la lista.<br>
+                    <strong>Presupuestos:</strong> tocá <strong>✎</strong> para asignar límites por categoría.<br>
+                    <strong>Cuotas:</strong> activá "Pagar en cuotas" al crear un gasto con crédito.<br>
+                    <strong>Recurrente:</strong> activá "Gasto recurrente" para suscripciones (se auto-agregan cada mes).<br>
+                    <strong>📸 Foto:</strong> adjuntá una foto del comprobante.<br>
+                    <strong>🎤 Voz:</strong> usá el micrófono para dictar "500 Comida Cena".<br>
+                    <strong>📄 PDF:</strong> exportá un reporte mensual desde el botón ↑.<br>
+                    <strong>Deslizar:</strong> pasá el dedo a la izquierda sobre un movimiento para eliminarlo.
+                </div>
+            </details>
+            <div class="search-bar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="searchInput" placeholder="Buscar transacciones..." autocomplete="off">
+            </div>
+
+            <div id="remindersSection">
+                <div class="rem-header"><span class="rem-title">Próximos vencimientos</span><button class="budgets-edit-btn" id="remAddBtn">+ Agregar</button></div>
+                <div id="remindersList"></div>
+            </div>
+
+            <div class="monthly-card">
+                <div class="mc-header">
+                    <span id="mcMonth"></span>
+                    <span id="mcVs" class="mc-vs"></span>
+                </div>
+                <div class="mc-grid">
+                    <div class="mc-item">
+                        <span class="mc-label">Gastos</span>
+                        <strong class="mc-val expense" id="mcExpense">$0</strong>
+                    </div>
+                    <div class="mc-item">
+                        <span class="mc-label">Ingresos</span>
+                        <strong class="mc-val income" id="mcIncome">$0</strong>
+                    </div>
+                    <div class="mc-item">
+                        <span class="mc-label">Promedio/día</span>
+                        <strong class="mc-val" id="mcAvg">$0</strong>
+                    </div>
+                    <div class="mc-item">
+                        <span class="mc-label">vs mes ant.</span>
+                        <strong class="mc-val" id="mcChange">—</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <div class="filter-type">
+                    <button class="ft-btn active" data-ft="all">Todos</button>
+                    <button class="ft-btn" data-ft="expense">Gastos</button>
+                    <button class="ft-btn" data-ft="income">Ingresos</button>
+                </div>
+                <select id="filterCategory" class="filter-select">
+                    <option value="">Todas las categorías</option>
+                </select>
+            </div>
+
+            <div class="filter-method-bar" id="filterMethodBar">
+                <span class="fm-label">Método:</span>
+                <button class="fm-btn active" data-method="all">Todos</button>
+                <button class="fm-btn" data-method="efectivo">Efectivo</button>
+                <button class="fm-btn" data-method="debito">Débito</button>
+                <button class="fm-btn" data-method="credito">Crédito</button>
+                <button class="fm-btn" data-method="mpago">M.Pago</button>
+            </div>
+
+                <div class="stats-section" id="statsSection" hidden>
+                <div class="stats-row">
+                    <div class="chart-wrap">
+                        <svg id="donutChart" viewBox="0 0 100 100" width="140" height="140">
+                            <circle cx="50" cy="50" r="38" fill="none" stroke="var(--border)" stroke-width="10"/>
+                            <g id="donutSegments"></g>
+                            <text x="50" y="48" text-anchor="middle" fill="var(--text-tertiary)" font-size="8" font-weight="500">Total</text>
+                            <text x="50" y="60" text-anchor="middle" fill="var(--text)" font-size="11" font-weight="700" id="chartTotalText">$0</text>
+                        </svg>
+                    </div>
+                    <div class="chart-legend" id="chartLegend"></div>
+                </div>
+                <div class="budgets-section" id="budgetsSection">
+                    <div class="budgets-header">
+                        <span class="budgets-title">Presupuestos</span>
+                        <button class="budgets-edit-btn" id="editBudgetsBtn">Editar</button>
+                    </div>
+                    <div id="budgetsContainer"></div>
+                </div>
+                <div class="budgets-section" id="topDaysSection">
+                    <div class="budgets-header">
+                        <span class="budgets-title">Días con más gasto</span>
+                    </div>
+                    <div id="topDaysContainer"></div>
+                </div>
+                <div id="comparisonChartSection"><div class="rem-header"><span class="rem-title">Gastos mes vs mes</span></div><canvas id="comparisonChart" height="200"></canvas></div>
+
+                <div id="calendarSection">
+                    <div class="rem-header">
+                        <span class="rem-title">Calendario de gastos</span>
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <button class="btn-icon" id="calPrev" style="width:32px;height:32px;">‹</button>
+                            <span id="calMonth" style="font-size:14px;font-weight:600;min-width:140px;text-align:center;"></span>
+                            <button class="btn-icon" id="calNext" style="width:32px;height:32px;">›</button>
+                        </div>
+                    </div>
+                    <div id="calendarGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:8px;"></div>
+                    <div id="calDayDetail" style="margin-top:12px;" hidden></div>
+                </div>
+            </div>
+
+            <div id="cuotasSection" hidden>
+                <div class="rem-header"><span class="rem-title">Cuotas activas</span></div>
+                <div id="cuotasList"></div>
+            </div>
+
+            <div class="export-hint" id="exportHint">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Podés exportar todos tus movimientos a CSV desde el botón <strong>↑</strong> de arriba para abrirlos en Excel o guardar un respaldo.</span>
+            </div>
+            <div id="expenseList" class="item-list"></div>
+            <div class="empty-state" id="expensesEmpty">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 100 4h4a2 2 0 110 4H8"/><path d="M12 2v2m0 16v2"/></svg>
+                <p>No hay movimientos</p>
+            </div>
+        </section>
+
+        <!-- EXPENSE MODAL -->
+        <div class="modal-overlay" id="expenseModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 id="expenseModalTitle">Nuevo movimiento</h2>
+                    <div style="display:flex;gap:6px;">
+                        <button class="btn-icon" id="expenseDeleteBtn" aria-label="Eliminar" style="width:36px;height:36px;background:var(--danger-bg);color:var(--danger);box-shadow:none;display:none;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                        </button>
+                        <button class="btn-icon" id="expenseModalClose" aria-label="Cerrar" style="width:36px;height:36px;background:var(--bg);color:var(--text-secondary);box-shadow:none;border-radius:50%;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="segmented-control">
+                    <button class="seg-btn active" data-type="expense">Gasto</button>
+                    <button class="seg-btn" data-type="income">Ingreso</button>
+                    <button class="seg-btn" data-type="transfer">Transferencia</button>
+                </div>
+                <select id="expAccount" class="modal-input"><option value="">Cuenta</option></select>
+                <select id="expMethod" class="modal-input">
+                    <option value="">Método de pago</option>
+                    <option value="efectivo">Efectivo</option>
+                    <option value="debito">Débito</option>
+                    <option value="credito">Crédito</option>
+                    <option value="mpago">Mercado Pago</option>
+                    <option value="transferencia">Transferencia</option>
+                    <option value="otro">Otro</option>
+                </select>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <input type="number" id="expenseAmountInput" placeholder="Monto" class="modal-input" style="flex:1;margin-bottom:0;" step="0.01" min="0">
+                    <button class="btn-icon" id="scanBtn" aria-label="Escanear código" style="width:46px;height:46px;flex-shrink:0;">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7V5a2 2 0 012-2h2"/><path d="M17 3h2a2 2 0 012 2v2"/><path d="M21 17v2a2 2 0 01-2 2h-2"/><path d="M7 21H5a2 2 0 01-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+                    </button>
+                    <button class="btn-icon" id="voiceInputBtn" aria-label="Dictar gasto" style="width:46px;height:46px;flex-shrink:0;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                    </button>
+                    <input type="file" id="expensePhotoInput" accept="image/*" capture="environment" hidden>
+                    <button class="btn-icon" id="expensePhotoBtn" aria-label="Agregar foto" style="width:46px;height:46px;flex-shrink:0;">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </button>
+                </div>
+                <div id="voiceResult" hidden style="font-size:13px;color:var(--text-secondary);padding:8px 4px;margin-bottom:8px;"></div>
+                <select id="expenseCurrency" class="modal-input">
+                    <option value="ARS">$ ARS</option>
+                    <option value="USD">US$ USD</option>
+                </select>
+                <div id="cuotasToggle" hidden>
+                    <label class="cuotas-check"><input type="checkbox" id="cuotasCheck"> Pagar en cuotas</label>
+                    <div id="cuotasFields" hidden style="display:flex;gap:8px;margin-top:8px;">
+                        <input type="number" id="cuotasTotal" placeholder="Cuotas" class="modal-input" min="1" max="60" style="flex:1;margin-bottom:0;">
+                        <input type="number" id="cuotasCurrent" placeholder="N° cuota" class="modal-input" min="1" style="flex:1;margin-bottom:0;">
+                    </div>
+                </div>
+                <select id="expenseCategoryInput" class="modal-input">
+                    <option value="">Categoría</option>
+                    <option value="Comida">Comida</option>
+                    <option value="Transporte">Transporte</option>
+                    <option value="Salidas">Salidas</option>
+                    <option value="Servicios">Servicios</option>
+                    <option value="Salud">Salud</option>
+                    <option value="Compras">Compras</option>
+                    <option value="Sueldo">Sueldo</option>
+                    <option value="Otro">Otro</option>
+                </select>
+                <input type="text" id="expenseDescInput" placeholder="Descripción" class="modal-input">
+                <input type="date" id="expenseDateInput" class="modal-input">
+                <label class="cuotas-check" style="margin-top:8px;"><input type="checkbox" id="recurringCheck"> Gasto recurrente</label>
+                <select id="recurringFreq" class="modal-input" hidden>
+                  <option value="monthly">Mensual</option>
+                  <option value="yearly">Anual</option>
+                </select>
+                <button class="btn-primary" id="expenseSaveBtn">Guardar</button>
+            </div>
+        </div>
+
+        <!-- ACCOUNT MODAL -->
+        <div class="modal-overlay" id="accountModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>Cuentas</h2>
+                    <button class="btn-icon" id="accountModalClose" aria-label="Cerrar" style="width:36px;height:36px;background:var(--bg);color:var(--text-secondary);box-shadow:none;border-radius:50%;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div id="accountList"></div>
+                <div class="account-add-row">
+                    <input type="text" id="accountNameInput" placeholder="Nombre" class="modal-input" style="flex:1;margin-bottom:0;">
+                    <select id="accountTypeInput" class="modal-input" style="width:auto;flex-shrink:0;margin-bottom:0;">
+                        <option value="efectivo">Efectivo</option>
+                        <option value="debito">Débito</option>
+                        <option value="credito">Crédito</option>
+                        <option value="mpago">M.Pago</option>
+                    </select>
+                    <button class="btn-icon" id="accountAddBtn" aria-label="Agregar cuenta" style="width:46px;height:46px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                </div>
+                <div id="accountExtraFields" style="margin-top:4px;">
+                    <input type="number" id="accountStartingBalance" placeholder="Saldo inicial" class="modal-input" step="0.01" min="0">
+                    <input type="number" id="accountCreditLimit" placeholder="Límite de crédito" class="modal-input" step="0.01" min="0" hidden>
+                </div>
+            </div>
+        </div>
+
+        <!-- BUDGET MODAL -->
+        <div class="modal-overlay" id="budgetModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>Editar presupuestos</h2>
+                    <button class="btn-icon" id="budgetModalClose" aria-label="Cerrar" style="width:36px;height:36px;background:var(--bg);color:var(--text-secondary);box-shadow:none;border-radius:50%;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div id="budgetFormContainer"></div>
+                <button class="btn-primary" id="budgetSaveBtn">Guardar presupuestos</button>
+            </div>
+        </div>
+
+        <!-- REMINDER MODAL -->
+        <div class="modal-overlay" id="reminderModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>Nuevo vencimiento</h2>
+                    <button class="btn-icon" id="reminderModalClose" aria-label="Cerrar" style="width:36px;height:36px;background:var(--bg);color:var(--text-secondary);box-shadow:none;border-radius:50%;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <input type="text" id="remName" placeholder="Nombre (ej: Internet)" class="modal-input">
+                <input type="number" id="remAmount" placeholder="Monto" class="modal-input" step="0.01" min="0">
+                <div class="rem-day-row">
+                    <span>Vence el día</span>
+                    <input type="number" id="remDay" placeholder="15" min="1" max="31" class="modal-input" style="width:80px;margin-bottom:0;">
+                </div>
+                <select id="remCategory" class="modal-input">
+                    <option value="">Categoría</option>
+                    <option value="Servicios">Servicios</option>
+                    <option value="Alquiler">Alquiler</option>
+                    <option value="Suscripciones">Suscripciones</option>
+                    <option value="Seguros">Seguros</option>
+                    <option value="Otro">Otro</option>
+                </select>
+                <select id="remRepeat" class="modal-input">
+                    <option value="monthly">Cada mes</option>
+                    <option value="yearly">Cada año</option>
+                </select>
+                <div class="rem-day-row" id="remMonthRow" hidden>
+                    <span>Mes</span>
+                    <select id="remMonth" class="modal-input" style="flex:1;margin-bottom:0;">
+                        <option value="1">Enero</option>
+                        <option value="2">Febrero</option>
+                        <option value="3">Marzo</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Mayo</option>
+                        <option value="6">Junio</option>
+                        <option value="7">Julio</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                </div>
+                <button class="btn-primary" id="remSaveBtn">Guardar recordatorio</button>
+            </div>
+        </div>
+
+        <!-- ========== DIVIDIR VIEW ========== -->
+        <section class="view" id="view-split">
+            <header class="view-header">
+                <h1>Dividir gastos</h1>
+                <button class="btn-icon" id="splitNewBtn" aria-label="Nueva juntada">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+            </header>
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:14px;font-size:13px;color:var(--text-secondary);line-height:1.7;">
+                <strong style="color:var(--text);">¿Cómo funciona?</strong><br>
+                1. Creá una juntada y agregá cada persona con <strong>lo que pagó</strong>.<br>
+                2. Tocá <strong>Calcular</strong> — la app divide el total en partes iguales.<br>
+                3. Te muestra <strong>quién le debe a quién</strong> y el monto exacto.<br>
+                4. Cuando alguien paga, tocá <strong>Saldar</strong> ✓
+            </div>
+            <div id="splitList"></div>
+            <div class="empty-state" id="splitEmpty">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                <p>No hay juntadas — tocá <strong>+</strong> arriba para crear una</p>
+            </div>
+        </section>
+
+        <!-- SPLIT GROUP MODAL -->
+        <div class="modal-overlay" id="splitModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 id="splitModalTitle">Nueva juntada</h2>
+                    <div style="display:flex;gap:6px;">
+                    <button class="btn-icon" id="splitDeleteBtn" aria-label="Eliminar" style="width:36px;height:36px;background:var(--danger-bg);color:var(--danger);box-shadow:none;display:none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                    </button>
+                    <button class="btn-icon" id="splitModalClose" aria-label="Cerrar" style="width:36px;height:36px;background:var(--bg);color:var(--text-secondary);box-shadow:none;border-radius:50%;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div class="split-modal-content">
+                    <div class="split-modal-row">
+                        <input type="text" id="splitGroupName" placeholder="Nombre (ej: Cena 15/05)" class="modal-input">
+                        <select id="splitGroupCurrency" class="modal-input">
+                            <option value="ARS">$ ARS</option>
+                            <option value="USD">US$ USD</option>
+                        </select>
+                    </div>
+                    <div id="splitPeopleContainer"></div>
+                    <div class="split-add-row">
+                        <input type="text" id="splitPersonName" placeholder="Nombre" class="modal-input">
+                        <input type="number" id="splitPersonAmount" placeholder="$" class="modal-input" step="0.01" min="0">
+                        <button class="btn-icon" id="splitAddPersonBtn" aria-label="Agregar persona">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </button>
+                    </div>
+                    <div class="split-total">Total: <strong id="splitTotalAmount">$0.00</strong></div>
+                    <button class="btn-primary" id="splitCalculateBtn">Calcular</button>
+
+                    <div id="splitResults" hidden>
+                        <hr>
+                        <h3>Transferencias</h3>
+                        <div id="splitTransfers"></div>
+                        <div id="splitPerPerson"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SETTINGS MODAL ========== -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Configuración</h2>
+                <button class="btn-icon" id="settingsModalClose" aria-label="Cerrar" style="width:36px;height:36px;background:var(--bg);color:var(--text-secondary);box-shadow:none;border-radius:50%;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="settings-section">
+                <span class="settings-label">Límite diario de gastos</span>
+                <input type="number" id="dailyLimitInput" class="modal-input" placeholder="$" step="100" min="0">
+            </div>
+            <div class="settings-section">
+                <span class="settings-label">Notificaciones</span>
+                <label class="cuotas-check"><input type="checkbox" id="notifToggle"> Activar notificaciones</label>
+            </div>
+            <div class="settings-section">
+                <h3 class="settings-subtitle">Color de acento</h3>
+                <div class="color-picker" id="colorPicker"></div>
+            </div>
+            <div class="settings-section">
+                <h3 class="settings-subtitle">Categorías de gastos</h3>
+                <div id="catList"></div>
+                <div class="account-add-row">
+                    <input type="text" id="catNameInput" placeholder="Nueva categoría" class="modal-input" style="flex:1;margin-bottom:0;">
+                    <button class="btn-icon" id="catAddBtn" aria-label="Agregar" style="width:46px;height:46px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                </div>
+            </div>
+            <hr style="border:none;border-top:1px solid var(--border);margin:16px 0;">
+            <div class="settings-section">
+                <h3 class="settings-subtitle">Respaldo de datos</h3>
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">Exportá todos tus datos o importá un respaldo previo.</p>
+                <div style="display:flex;gap:10px;">
+                    <button class="btn-primary" id="backupExportBtn" style="flex:1;">Exportar</button>
+                    <button class="btn-primary" id="backupImportBtn" style="flex:1;background:var(--bg);color:var(--text);box-shadow:none;">Importar</button>
+                </div>
+                <input type="file" id="backupFileInput" accept=".json" style="display:none;">
+            </div>
+            <hr style="border:none;border-top:1px solid var(--border);margin:16px 0;">
+                <div class="settings-section">
+                <h3 class="settings-subtitle">Cotización USD Blue</h3>
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:8px;">Usado para convertir gastos en USD a ARS en el balance general.</p>
+                <div class="account-add-row">
+                    <input type="number" id="blueRateInput" placeholder="Ej: 1200" class="modal-input" step="1" min="0" style="flex:1;margin-bottom:0;">
+                    <button class="btn-icon" id="blueRateFetchBtn" aria-label="Traer cotización" style="width:46px;height:46px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+                    </button>
+                    <button class="btn-icon" id="blueRateSaveBtn" aria-label="Guardar cotización" style="width:46px;height:46px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                </div>
+            </div>
+            <hr style="border:none;border-top:1px solid var(--border);margin:16px 0;">
+            <div class="settings-section" id="firebaseSection">
+                <h3 class="settings-subtitle">Cuenta en la nube</h3>
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">Iniciá sesión con Google para mantener tus datos sincronizados entre dispositivos.</p>
+                <button class="btn-primary" id="firebaseLoginBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#fff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#fff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#fff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#fff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                    Iniciar sesión con Google
+                </button>
+                <div id="firebaseUserInfo" class="hidden" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:8px;">
+                    <img class="fu-avatar" src="" alt="" style="width:36px;height:36px;border-radius:50%;" hidden>
+                    <div style="flex:1;min-width:0;">
+                        <div class="fu-name" style="font-weight:600;font-size:14px;"></div>
+                        <div class="fu-email" style="font-size:12px;color:var(--text-tertiary);"></div>
+                    </div>
+                    <button class="btn-icon" id="firebaseLogoutBtn" aria-label="Cerrar sesión" style="width:36px;height:36px;background:var(--danger-bg);color:var(--danger);box-shadow:none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    </button>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
+                    <span style="font-size:12px;color:var(--text-tertiary);">Estado: <strong id="firebaseSyncStatus">Solo local</strong></span>
+                    <button class="budgets-edit-btn" id="firebaseSyncBtn" style="margin-left:auto;">Sincronizar ahora</button>
+                </div>
+            </div>
+            <hr style="border:none;border-top:1px solid var(--border);margin:16px 0;">
+            <button class="btn-primary" id="helpTutorialBtn" style="margin-top:12px;">Ver tutorial de nuevo</button>
+            <div style="text-align:center;margin-top:12px;">
+                <a class="donate-btn" href="https://cafecito.app/julitech10" rel="noopener" target="_blank">☕ Invítame un café</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SAVINGS MODAL ========== -->
+    <div class="modal-overlay" id="savingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="savingsModalTitle">Nueva meta</h2>
+                <div style="display:flex;gap:6px;">
+                    <button class="btn-icon" id="savingsDeleteBtn" aria-label="Eliminar" style="width:36px;height:36px;background:var(--danger-bg);color:var(--danger);box-shadow:none;display:none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                    </button>
+                    <button class="btn-icon" id="savingsModalClose" aria-label="Cerrar" style="width:36px;height:36px;background:var(--bg);color:var(--text-secondary);box-shadow:none;border-radius:50%;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+            </div>
+            <input type="text" id="savingsNameInput" placeholder="Nombre (ej: Viaje a Brasil)" class="modal-input">
+            <input type="number" id="savingsTargetInput" placeholder="Meta $" class="modal-input" step="100" min="1">
+            <input type="number" id="savingsCurrentInput" placeholder="Ahorrado $" class="modal-input" step="100" min="0">
+            <input type="date" id="savingsDeadlineInput" class="modal-input" placeholder="Fecha límite (opcional)">
+            <button class="btn-primary" id="savingsSaveBtn">Guardar meta</button>
+        </div>
+    </div>
+
+    <!-- ========== GLOBAL SEARCH MODAL ========== -->
+    <div class="modal-overlay" id="searchModal">
+        <div class="modal" style="padding:16px;">
+            <div class="search-modal-header">
+                <div class="search-modal-field">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="globalSearchInput" placeholder="Buscar en toda la app..." autocomplete="off">
+                </div>
+                <button class="search-modal-close" id="searchModalClose">Cancelar</button>
+            </div>
+            <div id="searchResults" class="search-results"></div>
+            <div class="search-empty" id="searchEmpty">
+                <p style="color:var(--text-tertiary);font-size:14px;text-align:center;padding:40px 0;">Buscá en tareas, notas y gastos</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== ONBOARDING ========== -->
+    <div class="onboarding-overlay hidden" id="onboardingOverlay">
+        <div class="onboarding-slide active" data-slide="0">
+            <div class="onboarding-icon">💰</div>
+            <h2>Controlá tus gastos</h2>
+            <p>Registrá ingresos y gastos, creá presupuestos, seguí tus cuotas y mantené todo bajo control.</p>
+        </div>
+        <div class="onboarding-slide" data-slide="1">
+            <div class="onboarding-icon">📋</div>
+            <h2>Tareas y notas</h2>
+            <p>Organizá tu día con tareas con fecha de vencimiento y notas rápidas con búsqueda global.</p>
+        </div>
+        <div class="onboarding-slide" data-slide="2">
+            <div class="onboarding-icon">☁️</div>
+            <h2>Tus datos seguros</h2>
+            <p>Iniciá sesión con Google para sincronizar tus datos entre dispositivos. Todo sin conexión.</p>
+        </div>
+        <div class="onboarding-dots" id="onboardingDots">
+            <span class="onboarding-dot active"></span>
+            <span class="onboarding-dot"></span>
+            <span class="onboarding-dot"></span>
+        </div>
+        <button class="btn-primary onboarding-btn" id="onboardingBtn">Siguiente</button>
+    </div>
+
+    <!-- ========== TOAST ========== -->
+    <div id="toastContainer"></div>
+
+    <!-- ========== BOTTOM NAV ========== -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" data-view="home">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Inicio</span>
+        </button>
+        <button class="nav-btn" data-view="tasks">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            <span>Tareas</span>
+        </button>
+        <button class="nav-btn" data-view="notes">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span>Notas</span>
+        </button>
+        <button class="nav-btn" data-view="expenses" style="position:relative;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 100 4h4a2 2 0 110 4H8"/><path d="M12 2v2m0 16v2"/></svg>
+            <span>Gastos</span>
+            <span class="nav-badge" id="expenseBadge" data-view="expenses">0</span>
+        </button>
+        <button class="nav-btn" data-view="split">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            <span>Dividir</span>
+        </button>
+    </nav>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="firebase.js"></script>
+    <script src="app.js"></script>
+    <script src="home.js"></script>
+    <script src="tasks.js"></script>
+    <script src="notes.js"></script>
+    <script src="expenses.js"></script>
+    <script src="split.js"></script>
+    <script src="savings.js"></script>
+</body>
+</html>
